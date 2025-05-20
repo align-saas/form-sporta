@@ -1,7 +1,6 @@
 // src/pages/Home.jsx
 import { useContext } from 'react';
 import { FormContext } from '../context/FormContext';
-import Button from '../components/Button';
 export default function Home() {
   const { setFormType } = useContext(FormContext);
 

@@ -1,7 +1,6 @@
 // src/pages/MembershipForm.jsx
 import { useContext } from 'react';
 import { FormContext } from '../context/FormContext';
-import Button from '../components/Button';
 
 export default function MembershipForm() {
   const { data, update } = useContext(FormContext);
