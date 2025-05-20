@@ -5,7 +5,7 @@ import Button from '../components/Button';
 import PDFGenerator from '../components/PDFGenerator';
 import { saveFormData } from '../services/firestoreService';
 export default function Summary() {
-  const { data,reset , update} = useContext(FormContext);
+  const { data,reset } = useContext(FormContext);
   const sigCanvas = useRef(null);
   const clearSignature = () => sigCanvas.current.clear();
   const handleSend = async () => {
