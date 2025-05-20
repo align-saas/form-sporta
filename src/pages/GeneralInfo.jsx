@@ -1,11 +1,10 @@
 // src/pages/GeneralInfo.jsx
 import { useContext, useEffect, useState } from 'react';
 import { FormContext } from '../context/FormContext';
-import { fetchProfesiones, fetchCountries } from '../utils/api';
+import {  fetchCountries } from '../utils/api';
 
 export default function GeneralInfo() {
   const { data, update } = useContext(FormContext);
-  const [profesiones, setProfesiones] = useState([]);
   const [errors, setErrors] = useState({ dpi: '', nombre: '', apellido: '' });
   const [countries, setCountries] = useState([]);
   useEffect(() => {
