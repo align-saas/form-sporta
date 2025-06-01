@@ -30,7 +30,7 @@ function StepContent() {
 export default function App() {
   return (
     <FormProvider>
-     <InnerApp />
+      <InnerApp />
     </FormProvider>
   );
 }
@@ -53,7 +53,7 @@ function InnerApp() {
     );
   }
   // Cuando el usuario elige "new", arranca el form
-  if (formType === 'new') {
+  if (formType === 'new' || formType === 'update') {
     return (
       <div className="relative">
         {/* logos aquí si los quieres */}

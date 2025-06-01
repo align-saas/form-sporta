@@ -30,9 +30,8 @@ export default function Home() {
                 Sesión de prueba
         </button>
         <button
-          onClick={() => alert('Actualizar datos: pendiente implementar')}
+          onClick={() => setFormType('update')}
           className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300"
-          disabled
         >
           Actualizar datos
         </button>

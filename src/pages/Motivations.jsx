@@ -20,7 +20,7 @@ export default function Motivations() {
 
   const gimnasiosAnteriores = [
     'CASA', 'RESIDENCIAL', 'CLUB SOCIAL', 'SMART FIT', 'FITNESS ONE',
-    'SCANDINAVIA', 'FUTECA', 'GO FIT', 'DINAMIC', 'ATLETIC',
+    'SCANDINAVIA', 'FUTECA', 'GO FIT', 'DINAMIC', 'ATLETIC','SPORTA', 
     'IMPULSO', 'OLIMPO', 'XSPORT', 'LEGACY', 'ORANGE THEORY', 'CROSS FIT'
   ];
 
@@ -53,7 +53,7 @@ export default function Motivations() {
 
       {/* 1. Academia frecuentada */}
       <div>
-        <label className="block font-medium">Academia frecuentada</label>
+        <label className="block font-medium">Academia de interés</label>
         <select
           value={data.academiaFrequentada}
           onChange={(e) => update('academiaFrequentada', e.target.value)}

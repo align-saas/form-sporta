@@ -3,27 +3,23 @@ import { useContext, useState } from 'react';
 import { FormContext } from '../context/FormContext';
 
 export default function ContactInfo() {
-  const { data, update } = useContext(FormContext);
-  const [errors, setErrors] = useState({
-    telefono: '',
-    correo: '',
-    telefonoEmergencia: '',
-  });
+  const { data, update ,errors, updateError} = useContext(FormContext);
+
 
   const validateField = (field, value) => {
-    let error = '';
+    let msg = '';
     if (field === 'telefono' || field === 'telefonoEmergencia') {
       if (!/^\d{8}$/.test(value)) {
-        error = 'El teléfono debe tener exactamente 8 dígitos.';
+        msg = 'El teléfono debe tener exactamente 8 dígitos.';
       }
     }
     if (field === 'correo') {
       // Validación básica de email
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        error = 'Correo electrónico no válido.';
+        msg = 'Correo electrónico no válido.';
       }
     }
-    setErrors((prev) => ({ ...prev, [field]: error }));
+    updateError(field, msg);
   };
 
   return (
@@ -43,6 +39,20 @@ export default function ContactInfo() {
         />
         {errors.telefono && (
           <p className="text-red-600 text-sm mt-1">{errors.telefono}</p>
+        )}
+      </div>
+      <div>
+        <label className="block font-medium">Teléfono extranjero opcional</label>
+        <input
+          type="tel"
+          required
+          value={data.telefonoExtranjero}
+          onChange={(e) => update('telefonoExtranjero', e.target.value)}
+          onBlur={(e) => validateField('telefonoExtranjero', e.target.value)}
+          className="mt-1 w-full border rounded p-2"
+        />
+        {errors.telefonoExtranjero && (
+          <p className="text-red-600 text-sm mt-1">{errors.telefonoExtranjero}</p>
         )}
       </div>
 

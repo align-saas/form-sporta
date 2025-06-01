@@ -2,9 +2,9 @@ import { createContext, useState } from 'react';
 
 const initialData = {
   // General Info
-  dpi: '', nombre: '', apellido: '', fechaNacimiento: '', sexo: '', nacionalidad: 'Guatemalteca', zona: '', profesion: '', consume: '',
+  dpi: '', nombre: '',nit:'', apellido: '', fechaNacimiento: '', sexo: '', nacionalidad: 'Guatemalteca', zona: '', profesion: '', consume: '', carnet: '',  
   // Contact Info
-  telefono: '', correo: '', telefonoEmergencia: '',
+  telefono: '', correo: '', telefonoEmergencia: '',telefonoExtranjero: '',
   // Motivations Info
   areaEnfoque: '', academiaFrequentada: '', motivoIngreso: '', tieneExperiencia: '', gimnasioAnterior: '', sigueDieta: '', tieneLesiones: '',
   // Nueva sección “Membresía y Pago”
@@ -22,17 +22,25 @@ export function FormProvider({ children }) {
   const [formType, setFormType] = useState(null);
   const [step, setStep] = useState(1);
   const [data, setData] = useState(initialData);
+  const [errors, setErrors] = useState({});
+  const updateError = (field, message) => {
+    setErrors(e => ({ ...e, [field]: message }));
+  };
 
   const validateStep = () => {
     switch(step) {
-      case 1:
-        return [
-          'dpi','nombre','apellido','fechaNacimiento',
-          'sexo','nacionalidad','zona','consume'
-        ].every(f => data[f] && data[f].toString().trim() !== '');
-      case 2:
-        return ['telefono','correo','telefonoEmergencia']
-          .every(f => data[f] && data[f].toString().trim() !== '');
+      case 1: {
+        const baseRequired = ['dpi','nit','nombre','apellido','fechaNacimiento','sexo','nacionalidad','zona','consume'];
+        const required = formType === 'update'? [...baseRequired, 'carnet']  : baseRequired;
+        return required.every((f) => {
+          const val = data[f]?.toString().trim();
+          return Boolean(val) && !errors[f];
+        });
+      }
+      case 2: {
+        const required = ['telefono','correo','telefonoEmergencia'];
+        return required.every(f => data[f] && !errors[f]);
+      }
       case 3:
         return ['areaEnfoque','academiaFrequentada','motivoIngreso']
           .every(f => data[f] && data[f].toString().trim() !== '');
@@ -50,10 +58,18 @@ export function FormProvider({ children }) {
     setFormType(null);
     setStep(1);
     setData(initialData);
+    setErrors({});
   };
 
   return (
-    <FormContext.Provider value={{ formType, setFormType, step, next, back, data, update, reset ,validateStep}}>
+    <FormContext.Provider value={{
+        formType, setFormType,
+        step, next, back,
+        data, update, reset,
+        validateStep,
+        errors,       
+        updateError
+      }}>
       {children}
     </FormContext.Provider>
   );

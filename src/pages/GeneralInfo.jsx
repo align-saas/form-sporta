@@ -4,8 +4,7 @@ import { FormContext } from '../context/FormContext';
 import {  fetchCountries } from '../utils/api';
 
 export default function GeneralInfo() {
-  const { data, update } = useContext(FormContext);
-  const [errors, setErrors] = useState({ dpi: '', nombre: '', apellido: '' });
+  const {formType, data, update ,errors, updateError, validateStep} = useContext(FormContext);
   const [countries, setCountries] = useState([]);
   useEffect(() => {
       fetchCountries()
@@ -17,19 +16,44 @@ export default function GeneralInfo() {
   const consumos = ['ESTUDIOS', 'TRABAJO', 'EMPRESA'];
 
   const validateField = (field, value) => {
-    let error = '';
-    if (field === 'dpi') {
-      if (!/^\d{13}$/.test(value)) error = 'El DPI debe tener exactamente 13 dígitos numéricos.';
+    let msg = '';
+    if (field === 'dpi' && !/^\d{13}$/.test(value)) {
+      msg = 'El DPI debe tener exactamente 13 dígitos numéricos.';
     }
     if (field === 'nombre' || field === 'apellido') {
-      if (value.trim().length < 3) error = 'Debe tener al menos 3 caracteres.';
+      if (value.trim().length < 3) msg = 'Debe tener al menos 3 caracteres.';
     }
-    setErrors((e) => ({ ...e, [field]: error }));
+    if (field === 'nit' && !/^\d{7,14}$/.test(value)) {
+      msg = 'El NIT debe tener entre 7 y 14 dígitos numéricos.';
+    }
+    if (field === 'carnet' && formType === 'update' && value.trim() === '') {
+      msg = 'El Carné Sporta es obligatorio al actualizar.';
+    }
+    // console.log('fieild msg', field);
+    // console.log('msg', msg);
+    // console.log('errors', errors);
+    // console.log('validate', validateStep());
+    updateError(field, msg);
   };
 
   return (
     <div className="space-y-4">
       {/* DPI */}
+      {formType === 'update' && (
+        <div>
+          <label className="block font-medium">Carné Sporta</label>
+          <input
+            type="text"
+            value={data.carnet || ''}
+            onChange={(e) => update('carnet', e.target.value)}
+            onBlur={(e) => validateField('carnet', e.target.value)}
+            className={`mt-1 w-full border rounded p-2 ${errors.carnet ? 'border-red-500' : ''}`}
+            placeholder="ID Sporta"
+            required
+          />
+          {errors.carnet && <p className="text-red-600 text-sm mt-1">{errors.carnet}</p>}
+        </div>
+      )}
       <div>
         <label className="block font-medium">DPI</label>
         <input
@@ -45,7 +69,23 @@ export default function GeneralInfo() {
         />
         {errors.dpi && <p className="text-red-600 text-sm mt-1">{errors.dpi}</p>}
       </div>
-
+      {/* NIT */}
+      <div>
+        <label className="block font-medium">NIT</label>
+        <input
+          type="text"
+          maxLength={14}
+          value={data.nit}
+          onChange={(e) => update('nit', e.target.value)}
+          onBlur={(e) => validateField('nit', e.target.value)}
+          className="mt-1 w-full border rounded p-2"
+          placeholder="7-14 dígitos"
+          required
+        />
+        {errors.nit && (
+          <p className="text-red-600 text-sm mt-1">{errors.nit}</p>
+        )}
+      </div>
       {/* Nombre */}
       <div>
         <label className="block font-medium">Nombre</label>
@@ -151,7 +191,7 @@ export default function GeneralInfo() {
 
       {/* ¿Qué consume más tu día? */}
       <div>
-        <label className="block font-medium">¿Qué consume más tu día?</label>
+        <label className="block font-medium">¿Qué consume más tiempo en tu día?</label>
         <select
           required
           value={data.consume}
