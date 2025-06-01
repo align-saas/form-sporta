@@ -4,7 +4,7 @@ import { FormContext } from '../context/FormContext';
 import {  fetchCountries } from '../utils/api';
 
 export default function GeneralInfo() {
-  const {formType, data, update ,errors, updateError, validateStep} = useContext(FormContext);
+  const {formType, data, update ,errors, updateError} = useContext(FormContext);
   const [countries, setCountries] = useState([]);
   useEffect(() => {
       fetchCountries()

@@ -1,10 +1,9 @@
 // src/pages/ContactInfo.jsx
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { FormContext } from '../context/FormContext';
 
 export default function ContactInfo() {
   const { data, update ,errors, updateError} = useContext(FormContext);
-
 
   const validateField = (field, value) => {
     let msg = '';
