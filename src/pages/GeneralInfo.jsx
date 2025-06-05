@@ -2,9 +2,9 @@
 import { useContext, useEffect, useState } from 'react';
 import { FormContext } from '../context/FormContext';
 import {  fetchCountries } from '../utils/api';
-
+import Button from '../components/Button';
 export default function GeneralInfo() {
-  const {formType, data, update ,errors, updateError} = useContext(FormContext);
+  const {formType, data, update ,errors, updateError, reset} = useContext(FormContext);
   const [countries, setCountries] = useState([]);
   useEffect(() => {
       fetchCountries()
@@ -203,6 +203,11 @@ export default function GeneralInfo() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
+      </div>
+      <div className="flex justify-between pt-6">
+        <Button onClick={reset} variant="primary">
+          Volver al menú
+        </Button>
       </div>
     </div>
   );

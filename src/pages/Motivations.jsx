@@ -6,7 +6,7 @@ export default function Motivations() {
   const { data, update } = useContext(FormContext);
 
   const disciplinas = [
-    'GIMNASIO', 'ATLETISMO', 'SQUASH', 'NATACION', 'GIMNASIA',
+    'GIMNASIO UNICAMENTE', 'ATLETISMO', 'SQUASH', 'NATACION', 'GIMNASIA',
     'KARATE', 'TENIS', 'CALISTENIA', 'JAZZ', 'BALLET',
     'CONTEMPLO', 'FLEX', 'CROSSFIT', 'CROSSFIT KIDS', 'TELAS',
     'HIP HOP', 'BOXEO'
@@ -46,8 +46,8 @@ export default function Motivations() {
           className="mt-1 w-full border rounded p-2"
         >
           <option value="">Selecciona</option>
-          <option value="gimnasio">Gimnasio</option>
-          <option value="academia">Academia</option>
+          <option value="gimnasio">GIMNACIO</option>
+          <option value="academia">ACADEMIA</option>
         </select>
       </div>
 
