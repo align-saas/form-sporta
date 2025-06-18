@@ -6,7 +6,7 @@ export async function fetchProfesiones() {
   }
   
   export async function fetchCountries() {
-    const res = await fetch('https://restcountries.com/v3.1/all');
+    const res = await fetch('https://restcountries.com/v3.1/all?fields=name');
     if (!res.ok) throw new Error('Error fetching countries');
     const data = await res.json();
     // Extraemos sólo el nombre común y ordenamos alfabéticamente

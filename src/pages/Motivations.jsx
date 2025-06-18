@@ -6,10 +6,10 @@ export default function Motivations() {
   const { data, update } = useContext(FormContext);
 
   const disciplinas = [
-    'GIMNASIO UNICAMENTE', 'ATLETISMO', 'SQUASH', 'NATACION', 'GIMNASIA',
-    'KARATE', 'TENIS', 'CALISTENIA', 'JAZZ', 'BALLET',
-    'CONTEMPLO', 'FLEX', 'CROSSFIT', 'CROSSFIT KIDS', 'TELAS',
-    'HIP HOP', 'BOXEO'
+    'GIMNASIO UNICAMENTE', 'ATHLETICS', 'SQUASH', 'NATACION', 'GIMNASIA',
+    'KARATE', 'TENIS', 'CALISTENIA', 'BALLET','BAILE',
+    'CONTEMPLO', 'FLEX', 'CROSSFIT', 'BELLY DANCE',
+    'HIP HOP', 'BOXEO', 'BABY SHARK', 'JIU JITSU', 'CICLISMO', 'MOMS&TOTS', 'HYROX'
   ];
 
   const motivosIngreso = [
@@ -19,9 +19,9 @@ export default function Motivations() {
   ];
 
   const gimnasiosAnteriores = [
-    'CASA', 'RESIDENCIAL', 'CLUB SOCIAL', 'SMART FIT', 'FITNESS ONE',
+    'CASA', 'RESIDENCIAL', 'CLUB SOCIAL', 'SMART FIT', 'FITNESS ONE', 'FEMMEFIT', 'TRIBO',
     'SCANDINAVIA', 'FUTECA', 'GO FIT', 'DINAMIC', 'ATLETIC','SPORTA', 
-    'IMPULSO', 'OLIMPO', 'XSPORT', 'LEGACY', 'ORANGE THEORY', 'CROSS FIT'
+    'IMPULSO', 'OLIMPO', 'XSPORT', 'LEGACY', 'ORANGE THEORY', 'CROSS FIT', 'OTROS'
   ];
 
   const dietas = [

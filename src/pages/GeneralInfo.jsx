@@ -13,7 +13,7 @@ export default function GeneralInfo() {
   }, []);
 
   const zonas = Array.from({ length: 25 }, (_, i) => `Zona ${i + 1}`);
-  const consumos = ['ESTUDIOS', 'TRABAJO', 'EMPRESA'];
+  const consumos = ['ESTUDIOS', 'TRABAJO', 'NEGOCIO PROPIO'];
 
   const validateField = (field, value) => {
     let msg = '';
@@ -23,8 +23,8 @@ export default function GeneralInfo() {
     if (field === 'nombre' || field === 'apellido') {
       if (value.trim().length < 3) msg = 'Debe tener al menos 3 caracteres.';
     }
-    if (field === 'nit' && !/^\d{7,14}$/.test(value)) {
-      msg = 'El NIT debe tener entre 7 y 14 dígitos numéricos.';
+    if (field === 'nit' && !(/^\d{7,14}$/.test(value) || value.toLowerCase() === 'cf')) {
+      msg = 'El NIT debe tener entre 7 y 14 dígitos numéricos o ser "cf".';
     }
     if (field === 'carnet' && formType === 'update' && value.trim() === '') {
       msg = 'El Carné Sporta es obligatorio al actualizar.';
