@@ -211,6 +211,12 @@ export default function PDFGenerator({ sigCanvasRef }) {
       pageHeight - 10,    // 10pt por encima del borde inferior
       { align: 'right' }
     );
+    doc.text(
+      `Vendedor: ${data.vendedor} `,
+      pageWidth - margin,
+      pageHeight - 20,    // 10pt por encima del borde inferior
+      { align: 'right' }
+    );
 
     doc.save(`formulario_contrato_${data.dpi}.pdf`);
   };

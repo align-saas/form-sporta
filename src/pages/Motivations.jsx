@@ -46,7 +46,7 @@ export default function Motivations() {
           className="mt-1 w-full border rounded p-2"
         >
           <option value="">Selecciona</option>
-          <option value="gimnasio">GIMNACIO</option>
+          <option value="gimnasio">GIMNASIO</option>
           <option value="academia">ACADEMIA</option>
         </select>
       </div>

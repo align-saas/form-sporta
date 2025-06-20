@@ -13,7 +13,8 @@ const initialData = {
   paymentMethod: '',         // 'Visacuotas' | 'TarjetaCredito' | 'Debito'
   creditAmount: '',          // número para “Tarjeta de Crédito Q. __”
   timestamp: '',      // ISO string timestamp
-  typeForm: ''        // 'new' | 'test' | 'update'
+  typeForm: '',        // 'new' | 'test' | 'update'
+  vendedor: ''
 };
 
 export const FormContext = createContext();
@@ -51,8 +52,21 @@ export function FormProvider({ children }) {
         return true;
     }
   };
-  const next = () => setStep((s) => Math.min(5, s + 1));
-  const back = () => setStep((s) => Math.max(1, s - 1));
+  const next = () => setStep((s) => {
+    // Si venimos de "update" y acabamos el paso 3, saltamos al 5
+    if (formType === 'update' && s === 3) {
+      return 5;
+    }
+    return Math.min(5, s + 1);
+  });
+
+  const back = () => setStep((s) => {
+    // Si venimos de "update" y estamos en el 5 (summary), volvemos al 3
+    if (formType === 'update' && s === 5) {
+      return 3;
+    }
+    return Math.max(1, s - 1);
+  });
   const update = (field, value) => setData((d) => ({ ...d, [field]: value }));
   const reset = () => {
     setFormType(null);

@@ -10,17 +10,21 @@ import sportaLogo from '../img/LOGO_SPORTA.png';
 import { jsPDF } from 'jspdf';
 
 export default function Summary() {
-  const { formType,data, reset } = useContext(FormContext);
+  const { formType,data, reset, update } = useContext(FormContext);
   const sigCanvas = useRef(null);
   const clearSignature = () => sigCanvas.current.clear();
 
   const handleSend = async () => {
+    if(formType === 'new' && data.vendedor === ''){
+      await toast.error(`EL campo Vendedor es obligatorio`);
+      return;
+    }
     try {
       const timestamp = new Date().toISOString();
       const typeFormValue = formType === 'update' ? 'UPDATE' : 'NEW';
       const dataToSave = { ...data, timestamp, typeForm: typeFormValue };
       const id = await saveFormData(dataToSave);
-      await generatePDFWhileSend();
+      if(formType === 'new' ) await generatePDFWhileSend();
       await toast.success(`Guardado correctamente con ID: ${id}`);
       reset();
     } catch (err) {
@@ -233,7 +237,12 @@ export default function Summary() {
         pageHeight - 10,    // 10pt por encima del borde inferior
         { align: 'right' }
       );
-  
+      doc.text(
+        `Vendedor: ${data.vendedor} `,
+        pageWidth - margin,
+        pageHeight - 20,    // 10pt por encima del borde inferior
+        { align: 'right' }
+      );
       doc.save(`formulario_contrato_${data.dpi}.pdf`);
     };
   return (
@@ -243,6 +252,19 @@ export default function Summary() {
       <h2 className="text-2xl font-bold text-center">Resumen de datos</h2>
 
       {/* Datos en tarjetas */}
+      {formType === 'new' && (
+        <div>
+          <label className="block font-medium">Vendedor</label>
+          <input
+            type="text"
+            value={data.vendedor || ''}
+            onChange={(e) => update('vendedor', e.target.value)}
+            className={`mt-1 w-full border rounded p-2`}
+            placeholder="ID Vendedor"
+            required
+          />
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {Object.entries(data)
         .filter(([key]) => ![
@@ -290,7 +312,9 @@ export default function Summary() {
         <Button variant="success" onClick={handleSend}>
         {formType === 'update' ? 'Actualizar Datos' : 'Enviar Formulario'}
         </Button>
-        <PDFGenerator sigCanvasRef={sigCanvas} />
+        {
+          formType === 'new' && (<PDFGenerator sigCanvasRef={sigCanvas} />)
+        }
         <Button variant="primary" onClick={reset}>
           Volver al menú
         </Button>

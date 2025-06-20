@@ -3,8 +3,7 @@ import { useContext } from 'react';
 import { FormContext } from '../context/FormContext';
 
 export default function MembershipForm() {
-  const { data, update } = useContext(FormContext);
-
+  const { data, update} = useContext(FormContext);
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold">Tipo de Membresía</h3>

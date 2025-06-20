@@ -13,6 +13,14 @@ export default function GeneralInfo() {
   }, []);
 
   const zonas = Array.from({ length: 25 }, (_, i) => `Zona ${i + 1}`);
+  const nuevasZonas = [
+    'Santa Catarina Pinula',
+    'Mixco',
+    'Villa Canales',
+    'Villa Nueva',
+    'San Jose Pinula',
+    ...zonas,
+  ];
   const consumos = ['ESTUDIOS', 'TRABAJO', 'NEGOCIO PROPIO'];
 
   const validateField = (field, value) => {
@@ -167,7 +175,7 @@ export default function GeneralInfo() {
           className="mt-1 w-full border rounded p-2"
         >
           <option value="">Selecciona</option>
-          {zonas.map((z) => (
+          {nuevasZonas.map((z) => (
             <option key={z} value={z}>{z}</option>
           ))}
         </select>
