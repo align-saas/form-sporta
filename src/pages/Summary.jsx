@@ -252,7 +252,7 @@ export default function Summary() {
       <h2 className="text-2xl font-bold text-center">Resumen de datos</h2>
 
       {/* Datos en tarjetas */}
-      {formType === 'new' && (
+      {formType === 'new'|| formType === 'update' && (
         <div>
           <label className="block font-medium">Vendedor</label>
           <input
