@@ -2,7 +2,7 @@ import { createContext, useState } from 'react';
 
 const initialData = {
   // General Info
-  dpi: '', nombre: '',nit:'', apellido: '', fechaNacimiento: '', sexo: '', nacionalidad: 'Guatemalteca', zona: '', profesion: '', consume: '', carnet: '',  
+  dpi: '', nombre: '',nit:'', apellido: '', fechaNacimiento: '', sexo: '', nacionalidad: '', zona: '', profesion: '', consume: '', carnet: '',  
   // Contact Info
   telefono: '', correo: '', telefonoEmergencia: '',telefonoExtranjero: '',
   // Motivations Info
@@ -43,7 +43,7 @@ export function FormProvider({ children }) {
         return required.every(f => data[f] && !errors[f]);
       }
       case 3:
-        return ['areaEnfoque','academiaFrequentada','motivoIngreso']
+        return ['areaEnfoque','academiaFrequentada','motivoIngreso', 'gimnasioAnterior', 'sigueDieta', 'tieneLesiones']
           .every(f => data[f] && data[f].toString().trim() !== '');
       case 4:
         return ['membershipType','paymentMethod']

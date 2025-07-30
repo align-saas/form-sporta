@@ -1,5 +1,5 @@
 // src/pages/Summary.jsx
-import { useContext, useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormContext } from '../context/FormContext';
 import Button from '../components/Button';
@@ -12,17 +12,24 @@ import { jsPDF } from 'jspdf';
 export default function Summary() {
   const { formType,data, reset, update } = useContext(FormContext);
   const sigCanvas = useRef(null);
+  const [isSending, setIsSending] = useState(false);
   const clearSignature = () => sigCanvas.current.clear();
 
   const handleSend = async () => {
+    if (isSending) return;
     if(formType === 'new' && data.vendedor === ''){
       await toast.error(`EL campo Vendedor es obligatorio`);
       return;
     }
     try {
-      const timestamp = new Date().toISOString();
+      setIsSending(true);
+      const timestamp = new Date(Date.now() - 6 * 60 * 60 * 1000)
+      .toISOString()
+      .replace('Z', '-06:00');
+      // console.log('timestamp', timestamp);
       const typeFormValue = formType === 'update' ? 'UPDATE' : 'NEW';
       const dataToSave = { ...data, timestamp, typeForm: typeFormValue };
+      // console.log('dataToSave', dataToSave);
       const id = await saveFormData(dataToSave);
       if(formType === 'new' ) await generatePDFWhileSend();
       await toast.success(`Guardado correctamente con ID: ${id}`);
@@ -30,6 +37,8 @@ export default function Summary() {
     } catch (err) {
       console.error(err);
       toast.error('Error al guardar el formulario');
+    }finally {
+      setIsSending(false);  // ← desbloqueamos cuando terminamos
     }
   };
 
