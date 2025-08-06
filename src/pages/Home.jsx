@@ -1,9 +1,10 @@
 // src/pages/Home.jsx
 import { useContext } from 'react';
 import { FormContext } from '../context/FormContext';
-export default function Home() {
-  const { setFormType } = useContext(FormContext);
+import { useNavigate } from 'react-router-dom';
 
+export default function Home() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-white flex flex-col items-center justify-center p-6">
         <div className="w-64 flex justify-center py-6">
@@ -19,18 +20,18 @@ export default function Home() {
       </p>
       <div className="space-y-4 w-full max-w-sm">
         <button
-          onClick={() => setFormType('new')}
+          onClick={() => navigate('/new')}
           className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
         >
           Nuevo cliente
         </button>
         <button 
-            onClick={() => setFormType('test')}
+            onClick={() => navigate('/test')}
             className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300">
                 Sesión de prueba
         </button>
         <button
-          onClick={() => setFormType('update')}
+          onClick={() => navigate('/update')}
           className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300"
         >
           Actualizar datos

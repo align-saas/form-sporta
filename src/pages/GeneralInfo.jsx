@@ -3,8 +3,11 @@ import { useContext, useEffect, useState } from 'react';
 import { FormContext } from '../context/FormContext';
 import {  fetchCountries } from '../utils/api';
 import Button from '../components/Button';
+import { useNavigate } from 'react-router-dom'
+
 export default function GeneralInfo() {
   const {formType, data, update ,errors, updateError, reset} = useContext(FormContext);
+  const navigate = useNavigate()
   const [countries, setCountries] = useState([]);
   useEffect(() => {
       fetchCountries()
@@ -12,6 +15,10 @@ export default function GeneralInfo() {
             .catch(console.error);
   }, []);
 
+  const goHome = () => {
+  reset();      // opcional, si quieres limpiar el formulario
+  navigate('/'); 
+  }
   const zonas = Array.from({ length: 25 }, (_, i) => `Zona ${i + 1}`);
   const nuevasZonas = [
     'Santa Catarina Pinula',
@@ -213,7 +220,7 @@ export default function GeneralInfo() {
         </select>
       </div>
       <div className="flex justify-between pt-6">
-        <Button onClick={reset} variant="primary">
+        <Button onClick={goHome} variant="primary">
           Volver al menú
         </Button>
       </div>

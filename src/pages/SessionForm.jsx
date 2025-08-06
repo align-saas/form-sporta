@@ -4,7 +4,10 @@ import { FormContext } from '../context/FormContext';
 import Button from '../components/Button';
 import { saveFormData } from '../services/firestoreService';
 import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom'
+
 export default function SessionForm() {
+  const navigate = useNavigate()
   const { data, update, reset } = useContext(FormContext);
   const [errors, setErrors] = useState({
     dpi: '',
@@ -18,6 +21,10 @@ export default function SessionForm() {
     academiaFrequentada: ''
   });
 
+  const goHome = () => {
+    reset();      // opcional, si quieres limpiar el formulario
+    navigate('/'); 
+  }
   const disciplinas = [
     'GIMNASIO', 'ATLETISMO', 'SQUASH', 'NATACION', 'GIMNASIA',
     'KARATE', 'TENIS', 'CALISTENIA', 'JAZZ', 'BALLET',
@@ -306,7 +313,7 @@ export default function SessionForm() {
 
         {/* BOTONES */}
         <div className="flex justify-between pt-6">
-          <Button onClick={reset} variant="primary">
+          <Button onClick={goHome} variant="primary">
             Volver al menú
           </Button>
           <Button type="submit" disabled={!isValid}>Enviar Sesión de Prueba</Button>

@@ -1,5 +1,6 @@
 // src/pages/Summary.jsx
 import { useContext, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SignatureCanvas from 'react-signature-canvas';
 import { FormContext } from '../context/FormContext';
 import Button from '../components/Button';
@@ -12,9 +13,14 @@ import { jsPDF } from 'jspdf';
 export default function Summary() {
   const { formType,data, reset, update } = useContext(FormContext);
   const sigCanvas = useRef(null);
+  const navigate = useNavigate();  
   const [isSending, setIsSending] = useState(false);
   const clearSignature = () => sigCanvas.current.clear();
 
+  const goHome = () => {
+   reset();           // limpia tu context si quieres
+   navigate('/');     // redirige al Home
+  };
   const handleSend = async () => {
     if (isSending) return;
     if(formType === 'new' && data.vendedor === ''){
@@ -324,9 +330,7 @@ export default function Summary() {
         {
           formType === 'new' && (<PDFGenerator sigCanvasRef={sigCanvas} />)
         }
-        <Button variant="primary" onClick={reset}>
-          Volver al menú
-        </Button>
+        <Button variant='primary' onClick={goHome}>Volver al menú</Button>
       </div>
     </div>
 
