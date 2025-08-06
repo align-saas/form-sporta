@@ -1,7 +1,5 @@
 // src/App.jsx
-import { useEffect, useContext } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { FormContext } from './context/FormContext';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import SessionForm from './pages/SessionForm';
 import Wizard from './pages/Wizard';  // veremos abajo

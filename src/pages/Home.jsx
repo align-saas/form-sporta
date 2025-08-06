@@ -1,6 +1,4 @@
 // src/pages/Home.jsx
-import { useContext } from 'react';
-import { FormContext } from '../context/FormContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
