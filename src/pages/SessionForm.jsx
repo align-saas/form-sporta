@@ -128,9 +128,10 @@ export default function SessionForm() {
       });
     } catch (err) {
       console.error(err);
-      toast.error('Error al guardar la sesión de prueba', {
+      toast.error(`${err}`, {
         position: 'top-center',
         duration: 3000,
+        
       });
     }
   };

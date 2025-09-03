@@ -42,7 +42,11 @@ export default function Summary() {
       reset();
     } catch (err) {
       console.error(err);
-      toast.error('Error al guardar el formulario');
+      toast.error(`${err}`, {
+        position: 'top-center',
+        duration: 3000,
+        
+      });
     }finally {
       setIsSending(false);  // ← desbloqueamos cuando terminamos
     }
