@@ -1,8 +1,11 @@
 // src/pages/Home.jsx
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { getEmpleadosData } from '../services/firestoreService';
 
 export default function Home() {
   const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-white flex flex-col items-center justify-center p-6">
         <div className="w-64 flex justify-center py-6">
