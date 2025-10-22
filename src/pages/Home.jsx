@@ -1,7 +1,6 @@
 // src/pages/Home.jsx
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { getEmpleadosData } from '../services/firestoreService';
+
 
 export default function Home() {
   const navigate = useNavigate();
