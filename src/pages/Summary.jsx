@@ -43,7 +43,7 @@ export default function Summary() {
   };
   const handleSend = async () => {
     if (isSending) return;
-    if (formType === 'new' && data.vendedor === '') {
+    if (formType === 'new' && !data.vendedor) {
       await toast.error(`EL campo Vendedor es obligatorio`);
       return;
     }
@@ -293,8 +293,8 @@ export default function Summary() {
         {/* Datos en tarjetas */}
         {(formType === 'new' || formType === 'update') && (
           <select
-            value={data.vendedor ?? ''}              // guarda el id del empleado seleccionado
-            onChange={(e) => update('vendedor', e.target.value ? Number(e.target.value) : null)}
+            value={data.vendedor ?? ''}              // guarda el nombre del empleado seleccionado
+            onChange={(e) => update('vendedor', e.target.value)}
             className="mt-1 w-full border rounded p-2"
             disabled={isLoading}
             required
