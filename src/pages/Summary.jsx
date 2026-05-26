@@ -6,6 +6,8 @@ import { FormContext } from '../context/FormContext';
 import Button from '../components/Button';
 import PDFGenerator from '../components/PDFGenerator';
 import { saveFormData, getEmpleadosData } from '../services/firestoreService';
+import { uploadPdf } from '../helpers/pdfUploadHelper';
+import { confirmWithToast } from '../helpers/confirmToast';
 import { toast, Toaster } from 'react-hot-toast';
 import sportaLogo from '../img/LOGO_SPORTA.png';
 import { jsPDF } from 'jspdf';
@@ -37,14 +39,23 @@ export default function Summary() {
 
     fetchEmpleados();
   }, []);
-  const goHome = () => {
+  const goHome = async () => {
+    const shouldGoHome = await confirmWithToast({
+      title: 'Regresar al menú',
+      message: 'Se perderán los cambios que tenga. Si está en medio de un formulario, puede que se esté equivocando.',
+      confirmText: 'Regresar',
+      cancelText: 'Quedarme',
+    });
+
+    if (!shouldGoHome) return;
+
     reset();           // limpia tu context si quieres
     navigate('/');     // redirige al Home
   };
   const handleSend = async () => {
     if (isSending) return;
-    if (formType === 'new' && !data.vendedor) {
-      await toast.error(`EL campo Vendedor es obligatorio`);
+    if ((formType === 'new' || formType === 'update') && !data.vendedor) {
+      await toast.error(`El campo Vendedor es obligatorio`);
       return;
     }
     try {
@@ -54,10 +65,21 @@ export default function Summary() {
         .replace('Z', '-06:00');
       // console.log('timestamp', timestamp);
       const typeFormValue = formType === 'update' ? 'UPDATE' : 'NEW';
-      const dataToSave = { ...data, timestamp, typeForm: typeFormValue };
+      const pdfBlob = await generatePDFWhileSend(typeFormValue);
+      const pdfUpload = await uploadPdf({
+        pdfBlob,
+        workerName: data.vendedor,
+        formType: typeFormValue,
+      });
+      const dataToSave = {
+        ...data,
+        timestamp,
+        typeForm: typeFormValue,
+        pdfFileName: pdfUpload.fileName,
+        pdfStoragePath: pdfUpload.storagePath,
+      };
       // console.log('dataToSave', dataToSave);
       const id = await saveFormData(dataToSave);
-      if (formType === 'new') await generatePDFWhileSend();
       await toast.success(`Guardado correctamente con ID: ${id}`);
       reset();
     } catch (err) {
@@ -72,7 +94,7 @@ export default function Summary() {
     }
   };
 
-  const generatePDFWhileSend = async () => {
+  const generatePDFWhileSend = async (typeFormValue = 'NEW') => {
     // Convertir logo a DataURL
     const logoData = await new Promise((resolve, reject) => {
       const img = new Image();
@@ -103,7 +125,9 @@ export default function Summary() {
     doc.setFontSize(12);
     doc.setFont(undefined, 'bold');
 
-    const title = 'Contrato de Nuevo Socio';
+    const title = typeFormValue === 'UPDATE'
+      ? 'Actualización de Datos de Socio'
+      : 'Contrato de Nuevo Socio';
     // medimos el ancho del texto
     const textWidth = doc.getTextWidth(title);
     // calculamos la X para centrarlo
@@ -282,7 +306,7 @@ export default function Summary() {
       pageHeight - 20,    // 10pt por encima del borde inferior
       { align: 'right' }
     );
-    doc.save(`formulario_contrato_${data.dpi}.pdf`);
+    return doc.output('blob');
   };
   return (
     <>
@@ -355,8 +379,10 @@ export default function Summary() {
 
         {/* Acciones */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <Button variant="success" onClick={handleSend}>
-            {formType === 'update' ? 'Actualizar Datos' : 'Enviar Formulario'}
+          <Button variant="success" onClick={handleSend} disabled={isSending}>
+            {isSending
+              ? 'Enviando...'
+              : formType === 'update' ? 'Actualizar Datos' : 'Enviar Formulario'}
           </Button>
           {
             formType === 'new' && (<PDFGenerator sigCanvasRef={sigCanvas} />)

@@ -1,6 +1,7 @@
 // src/firebase.js
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
 // Sustituye estos valores por los tuyos del panel de Firebase
 const firebaseConfig = {
@@ -14,3 +15,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+
+const pdfStorageBucket = process.env.REACT_APP_FIREBASE_STORAGE_BUCKET_PDF;
+export const pdfStorage = getStorage(
+  app,
+  pdfStorageBucket ? `gs://${pdfStorageBucket}` : undefined
+);

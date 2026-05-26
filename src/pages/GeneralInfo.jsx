@@ -4,6 +4,8 @@ import { FormContext } from '../context/FormContext';
 import {  fetchCountries } from '../utils/api';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast';
+import { confirmWithToast } from '../helpers/confirmToast';
 
 export default function GeneralInfo() {
   const {formType, data, update ,errors, updateError, reset} = useContext(FormContext);
@@ -15,9 +17,18 @@ export default function GeneralInfo() {
             .catch(console.error);
   }, []);
 
-  const goHome = () => {
-  reset();      // opcional, si quieres limpiar el formulario
-  navigate('/'); 
+  const goHome = async () => {
+    const shouldGoHome = await confirmWithToast({
+      title: 'Regresar al menú',
+      message: 'Se perderán los cambios que tenga. Si está en medio de un formulario, puede que se esté equivocando.',
+      confirmText: 'Regresar',
+      cancelText: 'Quedarme',
+    });
+
+    if (!shouldGoHome) return;
+
+    reset();      // opcional, si quieres limpiar el formulario
+    navigate('/');
   }
   const zonas = Array.from({ length: 25 }, (_, i) => `Zona ${i + 1}`);
   const nuevasZonas = [
@@ -52,6 +63,8 @@ export default function GeneralInfo() {
   };
 
   return (
+    <>
+    <Toaster position="top-center" />
     <div className="space-y-4">
       {/* DPI */}
       {formType === 'update' && (
@@ -225,5 +238,6 @@ export default function GeneralInfo() {
         </Button>
       </div>
     </div>
+    </>
   );
 }

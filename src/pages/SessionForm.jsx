@@ -1,14 +1,20 @@
 // src/pages/SessionForm.jsx
-import { useContext, useState,useMemo } from 'react';
+import { useContext, useEffect, useState,useMemo } from 'react';
 import { FormContext } from '../context/FormContext';
 import Button from '../components/Button';
-import { saveFormData } from '../services/firestoreService';
+import { getEmpleadosData, saveFormData } from '../services/firestoreService';
+import { uploadPdf } from '../helpers/pdfUploadHelper';
+import { confirmWithToast } from '../helpers/confirmToast';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom'
+import { jsPDF } from 'jspdf';
 
 export default function SessionForm() {
   const navigate = useNavigate()
   const { data, update, reset } = useContext(FormContext);
+  const [empleados, setEmpleados] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
   const [errors, setErrors] = useState({
     dpi: '',
     telefono: '',
@@ -21,7 +27,33 @@ export default function SessionForm() {
     academiaFrequentada: ''
   });
 
-  const goHome = () => {
+  useEffect(() => {
+    const fetchEmpleados = async () => {
+      try {
+        setIsLoading(true);
+        const empleadosData = await getEmpleadosData();
+        setEmpleados(empleadosData);
+      } catch (error) {
+        console.error('Error al cargar empleados:', error.message);
+        toast.error('Error al cargar la lista de empleados');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEmpleados();
+  }, []);
+
+  const goHome = async () => {
+    const shouldGoHome = await confirmWithToast({
+      title: 'Regresar al menú',
+      message: 'Se perderán los cambios que tenga. Si está en medio de un formulario, puede que se esté equivocando.',
+      confirmText: 'Regresar',
+      cancelText: 'Quedarme',
+    });
+
+    if (!shouldGoHome) return;
+
     reset();      // opcional, si quieres limpiar el formulario
     navigate('/'); 
   }
@@ -95,7 +127,8 @@ export default function SessionForm() {
       'telefono',
       'correo',
       'areaEnfoque',
-      'academiaFrequentada'
+      'academiaFrequentada',
+      'vendedor'
     ];
 
     // 1. Comprueba que todos los required existan y no estén vacíos
@@ -110,16 +143,66 @@ export default function SessionForm() {
     return allFilled && noErrors;
   }, [data, errors]);
 
+  const generateTestPdf = () => {
+    const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+    const margin = 40;
+    let y = margin;
+
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text('Sesion de Prueba', margin, y);
+    y += 24;
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    const fields = [
+      ['DPI', data.dpi],
+      ['Nombre', `${data.nombre || ''} ${data.apellido || ''}`.trim()],
+      ['Fecha Nacimiento', data.fechaNacimiento],
+      ['Sexo', data.sexo],
+      ['Telefono', data.telefono],
+      ['Correo', data.correo],
+      ['Area de Enfoque', data.areaEnfoque],
+      ['Academia de interes', data.academiaFrequentada],
+      ['Trabajador que registra', data.vendedor],
+      ['Fecha de registro', new Date().toLocaleString()],
+    ];
+
+    fields.forEach(([label, value]) => {
+      doc.setFont(undefined, 'bold');
+      doc.text(`${label}:`, margin, y);
+      doc.setFont(undefined, 'normal');
+      doc.text(String(value || '-'), margin + 140, y);
+      y += 18;
+    });
+
+    return doc.output('blob');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSending) return;
     if (!isValid) {
       toast.error('Por favor corrige los errores antes de enviar');
       return;
     }
     try {
+      setIsSending(true);
       const timestamp = new Date().toISOString();
       const typeFormValue = 'TEST';
-      const dataToSave = { ...data, timestamp, typeForm: typeFormValue };
+      const pdfBlob = generateTestPdf();
+      const pdfUpload = await uploadPdf({
+        pdfBlob,
+        workerName: data.vendedor,
+        formType: typeFormValue,
+      });
+      const dataToSave = {
+        ...data,
+        timestamp,
+        typeForm: typeFormValue,
+        pdfFileName: pdfUpload.fileName,
+        pdfStoragePath: pdfUpload.storagePath,
+      };
       const id = await saveFormData(dataToSave);
       toast.success(`Guardado correctamente con ID: ${id}`, {
         position: 'top-center',
@@ -133,6 +216,8 @@ export default function SessionForm() {
         duration: 3000,
         
       });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -142,6 +227,27 @@ export default function SessionForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* INFORMACIÓN GENERAL */}
         <h3 className="text-lg font-semibold">Información General</h3>
+
+        <div>
+          <label className="block font-medium">Trabajador que registra</label>
+          <select
+            value={data.vendedor ?? ''}
+            onChange={(e) => update('vendedor', e.target.value)}
+            className="mt-1 w-full border rounded p-2"
+            disabled={isLoading}
+            required
+          >
+            <option value="" disabled>
+              {isLoading ? 'Cargando empleados...' : 'Selecciona un trabajador'}
+            </option>
+
+            {empleados.map((emp) => (
+              <option key={emp.id} value={`${emp.Nombre} ${emp.Apellido}`}>
+                {emp.Nombre} {emp.Apellido}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div>
           <label className="block font-medium">DPI</label>
@@ -317,7 +423,9 @@ export default function SessionForm() {
           <Button onClick={goHome} variant="primary">
             Volver al menú
           </Button>
-          <Button type="submit" disabled={!isValid}>Enviar Sesión de Prueba</Button>
+          <Button type="submit" disabled={!isValid || isSending}>
+            {isSending ? 'Enviando...' : 'Enviar Sesión de Prueba'}
+          </Button>
         </div>
       </form>
     </>
